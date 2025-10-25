@@ -275,7 +275,7 @@ See [LICENSE](LICENSE) file for details.
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/steadyread/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/steadyread/discussions)
-- **Email**: your-email@example.com
+- **Email**: info.projectfennec@gmail.com
 
 ## ⚠️ Disclaimer
 
