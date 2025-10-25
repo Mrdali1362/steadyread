@@ -1277,6 +1277,11 @@
                 // Hide wizard
                 document.getElementById('calibrationWizard').classList.add('hidden');
                 
+                // Auto-start stabilization after calibration
+                setTimeout(() => {
+                    startStabilization();
+                }, 300);
+                
                 console.log('Calibration finished successfully');
             } catch (error) {
                 console.error('Error finishing calibration:', error);
