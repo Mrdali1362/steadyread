@@ -34,6 +34,7 @@
             --text-dark: #333;
             --text-light: #666;
             --border-color: rgba(255, 255, 255, 0.1);
+            --buffer-zone: 60px; /* Buffer to prevent text cutoff at edges */
         }
 
         body {
@@ -574,7 +575,7 @@
             position: relative;
         }
 
-        /* Reading Content */
+        /* Reading Content - UPDATED WITH BUFFER ZONE */
         .reading-content {
             max-width: 700px;
             margin: 0 auto;
@@ -583,6 +584,12 @@
             font-size: 20px;
             color: var(--text-dark);
             letter-spacing: 0.02em;
+            transition: padding 0.3s ease;
+        }
+
+        /* Buffer zone when stabilizing - prevents text cutoff at edges */
+        #stabilizedContent.stabilizing .reading-content {
+            padding: 60px var(--buffer-zone); /* Larger side padding for buffer */
         }
 
         .reading-content.large-text {
@@ -762,6 +769,18 @@
 
             .size-options {
                 grid-template-columns: 1fr;
+            }
+
+            /* Adjust buffer zone for smaller screens */
+            :root {
+                --buffer-zone: 40px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            /* Even smaller buffer for very small screens */
+            :root {
+                --buffer-zone: 30px;
             }
         }
     </style>
@@ -1001,7 +1020,7 @@
                 <h1>Welcome to SteadyRead</h1>
                 
                 <div class="info-box">
-                    <strong>How it works:</strong> SteadyRead uses your device's motion sensors to detect shaking, then moves the content in the opposite direction to keep it visually stable.
+                    <strong>How it works:</strong> SteadyRead uses your device's motion sensors to detect shaking, then moves the content in the opposite direction to keep it visually stable. We've added extra padding on the sides to ensure text never gets cut off at the edges.
                 </div>
 
                 <p>This app is designed to help people with hand tremors read comfortably on their mobile devices. Whether you have Essential Tremor, Parkinson's disease, or any condition that causes hand shaking, SteadyRead aims to make reading easier.</p>
@@ -1016,7 +1035,7 @@
 
                 <p>Everyone experiences tremors differently. That's why we've personalized your settings based on your preferences. If something doesn't feel quite right, you can always adjust it in the settings menu or run the calibration again.</p>
 
-                <p>Try gently shaking your device while reading this text. You should notice the content remains relatively steady despite the movement.</p>
+                <p>Try gently shaking your device while reading this text. You should notice the content remains relatively steady despite the movement, and importantly, the text should never disappear off the edges of your screen.</p>
 
                 <h2>Privacy First</h2>
 
@@ -1064,8 +1083,9 @@
             <div class="setting-group">
                 <h3>About</h3>
                 <p style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;">
-                    <strong>SteadyRead v1.1</strong><br>
-                    Open source tremor stabilization for mobile reading.
+                    <strong>SteadyRead v1.2</strong><br>
+                    Open source tremor stabilization for mobile reading.<br><br>
+                    <em>Now with buffer zones to prevent text cutoff!</em>
                 </p>
             </div>
         </div>
@@ -1361,7 +1381,7 @@
             restartCalibration();
         });
 
-        // Stabilization code (same as before)
+        // Stabilization code
         const startButton = document.getElementById('startButton');
         const stopButton = document.getElementById('stopButton');
         const stabilizedContent = document.getElementById('stabilizedContent');
@@ -1460,7 +1480,9 @@
             
             updateStatus('✅ Stabilization Active - Content stays steady as you move', 'active');
             
+            // Add stabilizing class to enable buffer zone
             stabilizedContent.classList.remove('no-stabilization');
+            stabilizedContent.classList.add('stabilizing');
             
             if (largeTextToggle.checked) {
                 readingContent.classList.add('large-text');
@@ -1481,7 +1503,10 @@
             velocityX = 0;
             velocityY = 0;
             stabilizedContent.style.transform = 'translate(0, 0)';
+            
+            // Remove stabilizing class to remove buffer zone
             stabilizedContent.classList.add('no-stabilization');
+            stabilizedContent.classList.remove('stabilizing');
             
             readingContent.classList.remove('large-text');
             
