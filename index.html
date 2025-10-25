@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <title>SteadyRead - Tremor Stabilization </title>
+    <title>SteadyRead - Tremor Stabilization</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1288,6 +1288,12 @@
             });
             document.querySelector('.wizard-step[data-step="0"]').classList.add('active');
             updateProgress();
+            
+            // Reset calibration test state
+            document.getElementById('countdown').textContent = '10';
+            document.getElementById('startTestBtn').disabled = false;
+            document.getElementById('testCircle').classList.remove('measuring');
+            document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
         }
 
         function applySettings() {
@@ -1318,6 +1324,12 @@
 
         // Recalibrate button
         document.getElementById('recalibrateBtn').addEventListener('click', () => {
+            // Reset calibration test state
+            document.getElementById('countdown').textContent = '10';
+            document.getElementById('startTestBtn').disabled = false;
+            document.getElementById('testCircle').classList.remove('measuring');
+            document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
+            
             document.getElementById('calibrationWizard').classList.remove('hidden');
             restartCalibration();
         });
