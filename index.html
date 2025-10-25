@@ -1171,7 +1171,7 @@
             const instructions = document.getElementById('testInstructions');
             
             startBtn.disabled = true;
-            instructions.textContent = 'Hold steady... measuring your movement';
+            instructions.textContent = 'Just relax and hold your phone naturally...';
             testCircle.classList.add('measuring');
             
             // Request permission first
@@ -1266,15 +1266,23 @@
         }
 
         function finishCalibration() {
-            // Save settings
-            localStorage.setItem('steadyread_calibrated', 'true');
-            localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
-            
-            // Apply settings
-            applySettings();
-            
-            // Hide wizard
-            document.getElementById('calibrationWizard').classList.add('hidden');
+            try {
+                // Save settings
+                localStorage.setItem('steadyread_calibrated', 'true');
+                localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
+                
+                // Apply settings
+                applySettings();
+                
+                // Hide wizard
+                document.getElementById('calibrationWizard').classList.add('hidden');
+                
+                console.log('Calibration finished successfully');
+            } catch (error) {
+                console.error('Error finishing calibration:', error);
+                // Still try to hide wizard even if there's an error
+                document.getElementById('calibrationWizard').classList.add('hidden');
+            }
         }
 
         function skipCalibration() {
@@ -1297,29 +1305,43 @@
         }
 
         function applySettings() {
-            // Apply font
-            const fontClasses = {
-                'lexend': 'font-lexend',
-                'arial': 'font-arial',
-                'verdana': 'font-verdana',
-                'opensans': 'font-opensans',
-                'comic': 'font-comic'
-            };
-            
-            const readingContent = document.getElementById('readingContent');
-            readingContent.className = 'reading-content ' + fontClasses[userSettings.font];
-            
-            // Apply font size
-            readingContent.style.fontSize = userSettings.fontSize + 'px';
-            
-            // Apply sensitivity
-            document.getElementById('sensitivitySlider').value = userSettings.sensitivity;
-            document.getElementById('sensitivityValue').textContent = userSettings.sensitivity;
-            sensitivity = userSettings.sensitivity;
-            
-            // Apply toggles
-            document.getElementById('largeTextToggle').checked = userSettings.largeText;
-            document.getElementById('driftCorrectionToggle').checked = userSettings.driftCorrection;
+            try {
+                // Apply font
+                const fontClasses = {
+                    'lexend': 'font-lexend',
+                    'arial': 'font-arial',
+                    'verdana': 'font-verdana',
+                    'opensans': 'font-opensans',
+                    'comic': 'font-comic'
+                };
+                
+                const readingContent = document.getElementById('readingContent');
+                if (readingContent) {
+                    readingContent.className = 'reading-content ' + fontClasses[userSettings.font];
+                    
+                    // Apply font size
+                    readingContent.style.fontSize = userSettings.fontSize + 'px';
+                }
+                
+                // Apply sensitivity
+                const sensitivitySlider = document.getElementById('sensitivitySlider');
+                const sensitivityValue = document.getElementById('sensitivityValue');
+                if (sensitivitySlider && sensitivityValue) {
+                    sensitivitySlider.value = userSettings.sensitivity;
+                    sensitivityValue.textContent = userSettings.sensitivity;
+                    sensitivity = userSettings.sensitivity;
+                }
+                
+                // Apply toggles
+                const largeTextToggle = document.getElementById('largeTextToggle');
+                const driftCorrectionToggle = document.getElementById('driftCorrectionToggle');
+                if (largeTextToggle) largeTextToggle.checked = userSettings.largeText;
+                if (driftCorrectionToggle) driftCorrectionToggle.checked = userSettings.driftCorrection;
+                
+                console.log('Settings applied:', userSettings);
+            } catch (error) {
+                console.error('Error applying settings:', error);
+            }
         }
 
         // Recalibrate button
