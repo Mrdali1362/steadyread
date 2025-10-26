@@ -1706,7 +1706,7 @@
             const ay = accel.y || 0;
             
             demoRawX += ax * 0.5;
-            demoRawY += ay * 0.5;
+            demoRawY -= ay * 0.5; // Inverted for natural physics
             demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
             demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
             
@@ -1745,7 +1745,7 @@
             const ay = accel.y || 0;
             
             demoRawX += ax * 0.5;
-            demoRawY += ay * 0.5;
+            demoRawY -= ay * 0.5; // Inverted for natural physics
             demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
             demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
             
