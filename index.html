@@ -1731,8 +1731,8 @@
 
         function updateDemo() {
             if (!demoStabilizing) return;
-            // Black square = stabilized (raw position + compensation offset)
-            demoSquare.style.transform = `translate(${demoRawX + demoOffsetX}px, ${demoRawY + demoOffsetY}px)`;
+            // Black square = stabilized (raw position - compensation offset to counteract)
+            demoSquare.style.transform = `translate(${demoRawX - demoOffsetX}px, ${demoRawY - demoOffsetY}px)`;
             // Ghost = unstabilized (just the raw shake)
             demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
             requestAnimationFrame(updateDemo);
