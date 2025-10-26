@@ -757,6 +757,76 @@
             display: block;
         }
 
+        /* Demo Overlay */
+        #demoOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 300;
+        }
+
+        #demoOverlay.show {
+            display: block;
+        }
+
+        #demoSquare {
+            width: 100px;
+            height: 100px;
+            background: black;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -50px 0 0 -50px;
+            transition: transform 0.016s linear;
+        }
+
+        #demoGhost {
+            width: 100px;
+            height: 100px;
+            background: black;
+            opacity: 0.7;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -50px 0 0 -50px;
+            display: none;
+            transition: transform 0.016s linear;
+        }
+
+        #demoControls {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .demo-btn {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Lexend', sans-serif;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .demo-btn:active {
+            transform: scale(0.98);
+        }
+
+        .demo-btn.secondary {
+            background: #666;
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .wizard-content {
@@ -1081,6 +1151,13 @@
             </div>
 
             <div class="setting-group">
+                <h3>Demo</h3>
+                <div class="setting-item">
+                    <button class="btn btn-primary" id="viewDemoBtn" style="width: 100%; padding: 12px;">View Stabilization Demo</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
                 <h3>About</h3>
                 <p style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;">
                     <strong>SteadyRead v1.2</strong><br>
@@ -1092,6 +1169,16 @@
     </div>
 
     <div id="overlay"></div>
+
+    <!-- Demo Overlay -->
+    <div id="demoOverlay">
+        <div id="demoGhost"></div>
+        <div id="demoSquare"></div>
+        <div id="demoControls">
+            <button class="demo-btn secondary" id="closeDemoBtn">Close Demo</button>
+            <button class="demo-btn" id="toggleDemoBtn">Enable Stabilization</button>
+        </div>
+    </div>
 
     <script>
         // Configuration
@@ -1545,6 +1632,125 @@
             }
             lastTouchEnd = now;
         }, false);
+
+        // Demo functionality
+        const demoOverlay = document.getElementById('demoOverlay');
+        const demoSquare = document.getElementById('demoSquare');
+        const demoGhost = document.getElementById('demoGhost');
+        const viewDemoBtn = document.getElementById('viewDemoBtn');
+        const closeDemoBtn = document.getElementById('closeDemoBtn');
+        const toggleDemoBtn = document.getElementById('toggleDemoBtn');
+
+        let demoStabilizing = false;
+        let demoOffsetX = 0, demoOffsetY = 0;
+        let demoVelX = 0, demoVelY = 0;
+        let demoRawX = 0, demoRawY = 0;
+        let demoGhostHistory = [];
+
+        const demoSensitivity = 25;
+        const demoSmoothing = 0.85;
+        const demoDrift = 0.995;
+        const demoMaxOffset = 150;
+        const demoHistoryDuration = 10000;
+
+        viewDemoBtn.addEventListener('click', () => {
+            demoOverlay.classList.add('show');
+            settingsPanel.classList.remove('open');
+            overlay.classList.remove('show');
+            demoRawX = demoRawY = demoOffsetX = demoOffsetY = demoVelX = demoVelY = 0;
+            demoSquare.style.transform = 'translate(0, 0)';
+            demoGhost.style.transform = 'translate(0, 0)';
+        });
+
+        closeDemoBtn.addEventListener('click', () => {
+            demoOverlay.classList.remove('show');
+            if (demoStabilizing) {
+                demoStabilizing = false;
+                toggleDemoBtn.textContent = 'Enable Stabilization';
+                demoGhost.style.display = 'none';
+                window.removeEventListener('devicemotion', handleDemoMotion);
+            }
+        });
+
+        toggleDemoBtn.addEventListener('click', async () => {
+            if (!demoStabilizing) {
+                try {
+                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                        const permission = await DeviceMotionEvent.requestPermission();
+                        if (permission !== 'granted') return;
+                    }
+                    demoStabilizing = true;
+                    toggleDemoBtn.textContent = 'Disable Stabilization';
+                    demoGhost.style.display = 'block';
+                    demoGhostHistory = [];
+                    window.addEventListener('devicemotion', handleDemoMotion);
+                    updateDemo();
+                } catch (e) {
+                    console.error(e);
+                }
+            } else {
+                demoStabilizing = false;
+                toggleDemoBtn.textContent = 'Enable Stabilization';
+                demoGhost.style.display = 'none';
+                window.removeEventListener('devicemotion', handleDemoMotion);
+                demoOffsetX = demoOffsetY = demoVelX = demoVelY = demoRawX = demoRawY = 0;
+                demoSquare.style.transform = 'translate(0, 0)';
+            }
+        });
+
+        function handleDemoMotion(e) {
+            const accel = e.accelerationIncludingGravity;
+            if (!accel) return;
+            
+            const ax = accel.x || 0;
+            const ay = accel.y || 0;
+            
+            demoRawX += ax * 0.5;
+            demoRawY += ay * 0.5;
+            demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
+            demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
+            
+            if (demoStabilizing) {
+                const targetVelX = -ax * demoSensitivity * 0.1;
+                const targetVelY = -ay * demoSensitivity * 0.1;
+                demoVelX = demoVelX * demoSmoothing + targetVelX * (1 - demoSmoothing);
+                demoVelY = demoVelY * demoSmoothing + targetVelY * (1 - demoSmoothing);
+                demoOffsetX = (demoOffsetX + demoVelX) * demoDrift;
+                demoOffsetY = (demoOffsetY + demoVelY) * demoDrift;
+                demoOffsetX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetX));
+                demoOffsetY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetY));
+                
+                demoGhostHistory.push({ x: demoRawX, y: demoRawY, time: Date.now() });
+                const now = Date.now();
+                demoGhostHistory = demoGhostHistory.filter(p => now - p.time < demoHistoryDuration);
+            } else {
+                demoOffsetX = demoRawX;
+                demoOffsetY = demoRawY;
+            }
+        }
+
+        function updateDemo() {
+            if (!demoStabilizing) return;
+            demoSquare.style.transform = `translate(${demoOffsetX}px, ${demoOffsetY}px)`;
+            demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+            requestAnimationFrame(updateDemo);
+        }
+
+        window.addEventListener('devicemotion', (e) => {
+            if (demoStabilizing || !demoOverlay.classList.contains('show')) return;
+            const accel = e.accelerationIncludingGravity;
+            if (!accel) return;
+            
+            const ax = accel.x || 0;
+            const ay = accel.y || 0;
+            
+            demoRawX += ax * 0.5;
+            demoRawY += ay * 0.5;
+            demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
+            demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
+            
+            demoSquare.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+        });
     </script>
 </body>
 </html>
