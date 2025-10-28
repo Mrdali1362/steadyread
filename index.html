@@ -1564,8 +1564,11 @@
         function activateStabilization() {
             isStabilizing = true;
             
-            // Capture current scroll position as baseline
-            baselineScrollY = stabilizedContent.scrollTop;
+            // Reset all offsets to zero when starting
+            offsetX = 0;
+            offsetY = 0;
+            velocityX = 0;
+            velocityY = 0;
             
             window.addEventListener('devicemotion', handleMotion);
             
