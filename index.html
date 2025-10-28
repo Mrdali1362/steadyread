@@ -1489,6 +1489,9 @@
         let velocityX = 0;
         let velocityY = 0;
         
+        // Track scroll position when stabilization starts
+        let baselineScrollY = 0;
+        
         let sensitivity = userSettings.sensitivity;
         let smoothing = 0.85;
         let driftCorrection = 0.995;
@@ -1560,6 +1563,10 @@
 
         function activateStabilization() {
             isStabilizing = true;
+            
+            // Capture current scroll position as baseline
+            baselineScrollY = stabilizedContent.scrollTop;
+            
             window.addEventListener('devicemotion', handleMotion);
             
             startButton.classList.add('hidden');
