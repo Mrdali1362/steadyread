@@ -474,6 +474,8 @@
         .btn-small {
             padding: 6px 12px;
             font-size: 12px;
+            background: white;
+            color: black;
         }
 
         .hidden {
@@ -631,117 +633,6 @@
             color: var(--primary-dark);
         }
 
-        /* Settings Panel */
-        #settingsPanel {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 320px;
-            max-width: 90vw;
-            height: 100vh;
-            background: var(--bg-medium);
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
-            z-index: 200;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            color: white;
-        }
-
-        #settingsPanel.open {
-            right: 0;
-        }
-
-        .settings-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .settings-header h2 {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .settings-content {
-            padding: 20px;
-        }
-
-        .setting-group {
-            margin-bottom: 25px;
-        }
-
-        .setting-group h3 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .setting-item {
-            margin-bottom: 15px;
-        }
-
-        .setting-label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .toggle-switch input {
-            position: relative;
-            width: 50px;
-            height: 26px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 26px;
-            outline: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .toggle-switch input:checked {
-            background: var(--success-color);
-        }
-
-        .toggle-switch input::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            top: 4px;
-            left: 4px;
-            background: white;
-            transition: 0.3s;
-        }
-
-        .toggle-switch input:checked::before {
-            left: 28px;
-        }
-
         #overlay {
             display: none;
             position: fixed;
@@ -755,76 +646,6 @@
 
         #overlay.show {
             display: block;
-        }
-
-        /* Demo Overlay */
-        #demoOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 300;
-        }
-
-        #demoOverlay.show {
-            display: block;
-        }
-
-        #demoSquare {
-            width: 100px;
-            height: 100px;
-            background: black;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -50px 0 0 -50px;
-            transition: transform 0.016s linear;
-        }
-
-        #demoGhost {
-            width: 100px;
-            height: 100px;
-            background: black;
-            opacity: 0.7;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -50px 0 0 -50px;
-            display: none;
-            transition: transform 0.016s linear;
-        }
-
-        #demoControls {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-        }
-
-        .demo-btn {
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Lexend', sans-serif;
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        .demo-btn:active {
-            transform: scale(0.98);
-        }
-
-        .demo-btn.secondary {
-            background: #666;
         }
 
         /* Responsive */
@@ -1061,7 +882,6 @@
                 <span class="logo-icon">📖</span>
                 <span>SteadyRead</span>
             </div>
-            <button class="menu-btn" id="menuBtn" aria-label="Settings">⚙️</button>
         </div>
 
         <div id="controls">
@@ -1119,66 +939,7 @@
         </div>
     </div>
 
-    <!-- Settings Panel -->
-    <div id="settingsPanel">
-        <div class="settings-header">
-            <h2>Settings</h2>
-            <button class="close-btn" id="closeSettingsBtn">×</button>
-        </div>
-        <div class="settings-content">
-            <div class="setting-group">
-                <h3>Display</h3>
-                <div class="setting-item">
-                    <div class="toggle-switch">
-                        <div>
-                            <div class="setting-label">Large Text Mode</div>
-                        </div>
-                        <input type="checkbox" id="largeTextToggle" checked>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h3>Stabilization</h3>
-                <div class="setting-item">
-                    <div class="toggle-switch">
-                        <div>
-                            <div class="setting-label">Drift Correction</div>
-                        </div>
-                        <input type="checkbox" id="driftCorrectionToggle" checked>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h3>Demo</h3>
-                <div class="setting-item">
-                    <button class="btn btn-primary" id="viewDemoBtn" style="width: 100%; padding: 12px;">View Stabilization Demo</button>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h3>About</h3>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;">
-                    <strong>SteadyRead v1.2</strong><br>
-                    Open source tremor stabilization for mobile reading.<br><br>
-                    <em>Now with buffer zones to prevent text cutoff!</em>
-                </p>
-            </div>
-        </div>
-    </div>
-
     <div id="overlay"></div>
-
-    <!-- Demo Overlay -->
-    <div id="demoOverlay">
-        <div id="demoGhost"></div>
-        <div id="demoSquare"></div>
-        <div id="demoControls">
-            <button class="demo-btn secondary" id="closeDemoBtn">Close Demo</button>
-            <button class="demo-btn" id="toggleDemoBtn">Enable Stabilization</button>
-        </div>
-    </div>
 
     <script>
         // Configuration
