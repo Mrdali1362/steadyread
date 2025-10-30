@@ -1349,8 +1349,8 @@
             // Add stabilizing class to enable buffer zone
             stabilizedContent.classList.remove('no-stabilization');
             stabilizedContent.classList.add('stabilizing');
-            
-            if (largeTextToggle.checked) {
+
+            if (largeTextToggle && largeTextToggle.checked) {
                 readingContent.classList.add('large-text');
             }
             
