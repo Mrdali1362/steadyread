@@ -1268,7 +1268,7 @@
         function updateStabilization() {
             if (!isStabilizing) return;
 
-            if (driftCorrectionToggle.checked) {
+            if (driftCorrectionToggle && driftCorrectionToggle.checked) {
                 offsetX *= driftCorrection;
                 offsetY *= driftCorrection;
             }
@@ -1387,20 +1387,26 @@
         startButton.addEventListener('click', startStabilization);
         stopButton.addEventListener('click', stopStabilization);
 
-        menuBtn.addEventListener('click', () => {
-            settingsPanel.classList.add('open');
-            overlay.classList.add('show');
-        });
+        if (menuBtn && settingsPanel && overlay) {
+            menuBtn.addEventListener('click', () => {
+                settingsPanel.classList.add('open');
+                overlay.classList.add('show');
+            });
+        }
 
-        closeSettingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-        });
+        if (closeSettingsBtn && settingsPanel && overlay) {
+            closeSettingsBtn.addEventListener('click', () => {
+                settingsPanel.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        }
 
-        overlay.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-        });
+        if (overlay && settingsPanel) {
+            overlay.addEventListener('click', () => {
+                settingsPanel.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        }
 
         // Prevent zoom on double tap
         let lastTouchEnd = 0;
@@ -1432,26 +1438,31 @@
         const demoMaxOffset = 150;
         const demoHistoryDuration = 10000;
 
-        viewDemoBtn.addEventListener('click', () => {
-            demoOverlay.classList.add('show');
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-            demoRawX = demoRawY = demoOffsetX = demoOffsetY = demoVelX = demoVelY = 0;
-            demoSquare.style.transform = 'translate(0, 0)';
-            demoGhost.style.transform = 'translate(0, 0)';
-        });
+        if (viewDemoBtn && demoOverlay && settingsPanel && overlay && demoSquare && demoGhost) {
+            viewDemoBtn.addEventListener('click', () => {
+                demoOverlay.classList.add('show');
+                settingsPanel.classList.remove('open');
+                overlay.classList.remove('show');
+                demoRawX = demoRawY = demoOffsetX = demoOffsetY = demoVelX = demoVelY = 0;
+                demoSquare.style.transform = 'translate(0, 0)';
+                demoGhost.style.transform = 'translate(0, 0)';
+            });
+        }
 
-        closeDemoBtn.addEventListener('click', () => {
-            demoOverlay.classList.remove('show');
-            if (demoStabilizing) {
-                demoStabilizing = false;
-                toggleDemoBtn.textContent = 'Enable Stabilization';
-                demoGhost.style.display = 'none';
-                window.removeEventListener('devicemotion', handleDemoMotion);
-            }
-        });
+        if (closeDemoBtn && demoOverlay && toggleDemoBtn && demoGhost) {
+            closeDemoBtn.addEventListener('click', () => {
+                demoOverlay.classList.remove('show');
+                if (demoStabilizing) {
+                    demoStabilizing = false;
+                    toggleDemoBtn.textContent = 'Enable Stabilization';
+                    demoGhost.style.display = 'none';
+                    window.removeEventListener('devicemotion', handleDemoMotion);
+                }
+            });
+        }
 
-        toggleDemoBtn.addEventListener('click', async () => {
+        if (toggleDemoBtn && demoGhost && demoSquare) {
+            toggleDemoBtn.addEventListener('click', async () => {
             if (!demoStabilizing) {
                 try {
                     if (typeof DeviceMotionEvent.requestPermission === 'function') {
@@ -1475,7 +1486,8 @@
                 demoOffsetX = demoOffsetY = demoVelX = demoVelY = demoRawX = demoRawY = 0;
                 demoSquare.style.transform = 'translate(0, 0)';
             }
-        });
+            });
+        }
 
         function handleDemoMotion(e) {
             const accel = e.accelerationIncludingGravity;
@@ -1511,14 +1523,18 @@
         function updateDemo() {
             if (!demoStabilizing) return;
             // Black square = stabilized (raw position - compensation offset to counteract)
-            demoSquare.style.transform = `translate(${demoRawX - demoOffsetX}px, ${demoRawY - demoOffsetY}px)`;
+            if (demoSquare) {
+                demoSquare.style.transform = `translate(${demoRawX - demoOffsetX}px, ${demoRawY - demoOffsetY}px)`;
+            }
             // Ghost = unstabilized (just the raw shake)
-            demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+            if (demoGhost) {
+                demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+            }
             requestAnimationFrame(updateDemo);
         }
 
         window.addEventListener('devicemotion', (e) => {
-            if (demoStabilizing || !demoOverlay.classList.contains('show')) return;
+            if (demoStabilizing || !demoOverlay || !demoOverlay.classList.contains('show')) return;
             const accel = e.accelerationIncludingGravity;
             if (!accel) return;
             
@@ -1529,8 +1545,10 @@
             demoRawY -= ay * 0.5; // Inverted for natural physics
             demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
             demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
-            
-            demoSquare.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+
+            if (demoSquare) {
+                demoSquare.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+            }
         });
     </script>
 </body>
