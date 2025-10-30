@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,851 +10,854 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <title>SteadyRead - Tremor Stabilization</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        :root {
-            --primary-color: #2196F3;
-            --primary-dark: #1976D2;
-            --success-color: #4CAF50;
-            --warning-color: #FF9800;
-            --danger-color: #f44336;
-            --bg-dark: #1a1a1a;
-            --bg-medium: #2d2d2d;
-            --bg-light: #f5f5f5;
-            --text-dark: #333;
-            --text-light: #666;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --buffer-zone: 60px; /* Buffer to prevent text cutoff at edges */
-        }
+```
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-light);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        /* Calibration Wizard Styles */
-        #calibrationWizard {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            color: white;
-            overflow-y: auto;
-        }
+    :root {
+        --primary-color: #2196F3;
+        --primary-dark: #1976D2;
+        --success-color: #4CAF50;
+        --warning-color: #FF9800;
+        --danger-color: #f44336;
+        --bg-dark: #1a1a1a;
+        --bg-medium: #2d2d2d;
+        --bg-light: #f5f5f5;
+        --text-dark: #333;
+        --text-light: #666;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --buffer-zone: 60px; /* Buffer to prevent text cutoff at edges */
+    }
 
-        #calibrationWizard.hidden {
-            display: none;
-        }
+    body {
+        font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg-light);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .wizard-header {
-            padding: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.1);
-        }
+    /* Calibration Wizard Styles */
+    #calibrationWizard {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        color: white;
+        overflow-y: auto;
+    }
 
-        .wizard-header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
+    #calibrationWizard.hidden {
+        display: none;
+    }
 
-        .wizard-progress {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
+    .wizard-header {
+        padding: 20px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.1);
+    }
 
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s;
-        }
+    .wizard-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
 
-        .progress-dot.active {
-            background: white;
-            width: 24px;
-            border-radius: 4px;
-        }
+    .wizard-progress {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+    }
 
+    .progress-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s;
+    }
+
+    .progress-dot.active {
+        background: white;
+        width: 24px;
+        border-radius: 4px;
+    }
+
+    .wizard-content {
+        flex: 1;
+        padding: 30px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .wizard-step {
+        display: none;
+        animation: fadeIn 0.5s;
+    }
+
+    .wizard-step.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .step-description {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 30px;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    /* Font Selection */
+    .font-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .font-option {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+
+    .font-option:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .font-option.selected {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: white;
+    }
+
+    .font-option-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .font-name {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .font-badge {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+    }
+
+    .font-preview {
+        font-size: 18px;
+        line-height: 1.6;
+        opacity: 0.95;
+    }
+
+    .font-lexend { font-family: 'Lexend', sans-serif; }
+    .font-arial { font-family: Arial, sans-serif; }
+    .font-verdana { font-family: Verdana, sans-serif; }
+    .font-opensans { font-family: 'Open Sans', sans-serif; }
+    .font-comic { font-family: 'Comic Sans MS', cursive; }
+
+    /* Size Selection */
+    .size-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .size-option {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+        text-align: center;
+    }
+
+    .size-option:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .size-option.selected {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: white;
+    }
+
+    .size-label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .size-value {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+
+    .size-preview {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+        color: white;
+    }
+
+    .size-preview-text {
+        line-height: 1.8;
+    }
+
+    /* Calibration Test */
+    .calibration-test {
+        text-align: center;
+    }
+
+    .test-circle {
+        width: 200px;
+        height: 200px;
+        margin: 30px auto;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .test-circle::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(76, 175, 80, 0.2);
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform 0.3s;
+    }
+
+    .test-circle.measuring::before {
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(0); opacity: 1; }
+        50% { transform: scale(1); opacity: 0; }
+    }
+
+    .countdown {
+        font-size: 64px;
+        font-weight: 700;
+        z-index: 1;
+    }
+
+    .tremor-visualization {
+        width: 100%;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tremor-line {
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background: rgba(76, 175, 80, 0.8);
+        transform-origin: center;
+    }
+
+    /* Results */
+    .results-card {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .result-value {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* Buttons */
+    .wizard-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .wizard-btn {
+        flex: 1;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: 'Lexend', sans-serif;
+    }
+
+    .wizard-btn-primary {
+        background: white;
+        color: var(--primary-color);
+    }
+
+    .wizard-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .wizard-btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .wizard-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .wizard-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .skip-btn {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+        opacity: 0.8;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    /* Header Styles */
+    #header {
+        background: var(--bg-medium);
+        color: white;
+        padding: 12px 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        flex-shrink: 0;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .logo-icon {
+        font-size: 24px;
+    }
+
+    .menu-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    /* Controls */
+    #controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .control-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: 'Lexend', sans-serif;
+    }
+
+    .btn:active {
+        transform: scale(0.95);
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+    }
+
+    .btn-success {
+        background: var(--success-color);
+    }
+
+    .btn-danger {
+        background: var(--danger-color);
+    }
+
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* Sensitivity Slider */
+    .sensitivity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .sensitivity-label {
+        font-size: 12px;
+        white-space: nowrap;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .sensitivity-slider {
+        flex: 1;
+        height: 4px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        outline: none;
+    }
+
+    .sensitivity-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .sensitivity-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+    }
+
+    .sensitivity-value {
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 35px;
+        text-align: right;
+    }
+
+    /* Status */
+    #status {
+        background: rgba(158, 158, 158, 0.1);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+    }
+
+    #status.active {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4CAF50;
+    }
+
+    #status.error {
+        background: rgba(244, 67, 54, 0.2);
+        color: #f44336;
+    }
+
+    /* Content Area */
+    #contentWrapper {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        background: white;
+    }
+
+    #stabilizedContent {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        transition: transform 0.016s linear;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #stabilizedContent.no-stabilization {
+        position: relative;
+    }
+
+    /* Reading Content - UPDATED WITH BUFFER ZONE */
+    .reading-content {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        line-height: 1.9;
+        font-size: 20px;
+        color: var(--text-dark);
+        letter-spacing: 0.02em;
+        transition: padding 0.3s ease;
+    }
+
+    /* Buffer zone when stabilizing - prevents text cutoff at edges */
+    #stabilizedContent.stabilizing .reading-content {
+        padding: 150px 100px; /* Much larger padding to prevent edge collision */
+    }
+
+    .reading-content.large-text {
+        font-size: 26px;
+        line-height: 2.0;
+        letter-spacing: 0.03em;
+    }
+
+    .reading-content h1 {
+        font-size: 2em;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+        color: var(--primary-color);
+        line-height: 1.3;
+    }
+
+    .reading-content h2 {
+        font-size: 1.5em;
+        font-weight: 600;
+        margin-top: 1.5em;
+        margin-bottom: 0.7em;
+        color: var(--primary-dark);
+        line-height: 1.4;
+    }
+
+    .reading-content p {
+        margin-bottom: 1.2em;
+    }
+
+    .info-box {
+        background: #e3f2fd;
+        border-left: 4px solid var(--primary-color);
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 4px;
+    }
+
+    .info-box strong {
+        color: var(--primary-dark);
+    }
+
+    /* Settings Panel */
+    #settingsPanel {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 320px;
+        max-width: 90vw;
+        height: 100vh;
+        background: var(--bg-medium);
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+        z-index: 200;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        color: white;
+    }
+
+    #settingsPanel.open {
+        right: 0;
+    }
+
+    .settings-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .settings-header h2 {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .settings-content {
+        padding: 20px;
+    }
+
+    .setting-group {
+        margin-bottom: 25px;
+    }
+
+    .setting-group h3 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .setting-item {
+        margin-bottom: 15px;
+    }
+
+    .setting-label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .toggle-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .toggle-switch input {
+        position: relative;
+        width: 50px;
+        height: 26px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 26px;
+        outline: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .toggle-switch input:checked {
+        background: var(--success-color);
+    }
+
+    .toggle-switch input::before {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        top: 4px;
+        left: 4px;
+        background: white;
+        transition: 0.3s;
+    }
+
+    .toggle-switch input:checked::before {
+        left: 28px;
+    }
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 150;
+    }
+
+    #overlay.show {
+        display: block;
+    }
+
+    /* Demo Overlay */
+    #demoOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 300;
+    }
+
+    #demoOverlay.show {
+        display: block;
+    }
+
+    #demoSquare {
+        width: 100px;
+        height: 100px;
+        background: black;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -50px 0 0 -50px;
+        transition: transform 0.016s linear;
+    }
+
+    #demoGhost {
+        width: 100px;
+        height: 100px;
+        background: black;
+        opacity: 0.7;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -50px 0 0 -50px;
+        display: none;
+        transition: transform 0.016s linear;
+    }
+
+    #demoControls {
+        position: fixed;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+    }
+
+    .demo-btn {
+        padding: 16px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: 'Lexend', sans-serif;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+    .demo-btn:active {
+        transform: scale(0.98);
+    }
+
+    .demo-btn.secondary {
+        background: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
         .wizard-content {
-            flex: 1;
-            padding: 30px 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
+            padding: 20px 15px;
         }
-
-        .wizard-step {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .wizard-step.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        
         .step-title {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .step-description {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        /* Font Selection */
-        .font-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .font-option {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-
-        .font-option:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .font-option.selected {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: white;
-        }
-
-        .font-option-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .font-name {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .font-badge {
-            font-size: 11px;
-            padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-        }
-
-        .font-preview {
-            font-size: 18px;
-            line-height: 1.6;
-            opacity: 0.95;
-        }
-
-        .font-lexend { font-family: 'Lexend', sans-serif; }
-        .font-arial { font-family: Arial, sans-serif; }
-        .font-verdana { font-family: Verdana, sans-serif; }
-        .font-opensans { font-family: 'Open Sans', sans-serif; }
-        .font-comic { font-family: 'Comic Sans MS', cursive; }
-
-        /* Size Selection */
-        .size-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .size-option {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            text-align: center;
-        }
-
-        .size-option:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .size-option.selected {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: white;
-        }
-
-        .size-label {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .size-value {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .size-preview {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-            color: white;
-        }
-
-        .size-preview-text {
-            line-height: 1.8;
-        }
-
-        /* Calibration Test */
-        .calibration-test {
-            text-align: center;
-        }
-
-        .test-circle {
-            width: 200px;
-            height: 200px;
-            margin: 30px auto;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .test-circle::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(76, 175, 80, 0.2);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.3s;
-        }
-
-        .test-circle.measuring::before {
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(0); opacity: 1; }
-            50% { transform: scale(1); opacity: 0; }
-        }
-
-        .countdown {
-            font-size: 64px;
-            font-weight: 700;
-            z-index: 1;
-        }
-
-        .tremor-visualization {
-            width: 100%;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tremor-line {
-            position: absolute;
-            width: 2px;
-            height: 100%;
-            background: rgba(76, 175, 80, 0.8);
-            transform-origin: center;
-        }
-
-        /* Results */
-        .results-card {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .result-value {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        /* Buttons */
-        .wizard-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 30px;
-        }
-
-        .wizard-btn {
-            flex: 1;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Lexend', sans-serif;
-        }
-
-        .wizard-btn-primary {
-            background: white;
-            color: var(--primary-color);
-        }
-
-        .wizard-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .wizard-btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .wizard-btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .wizard-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .skip-btn {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            opacity: 0.8;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        /* Header Styles */
-        #header {
-            background: var(--bg-medium);
-            color: white;
-            padding: 12px 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .logo-icon {
-            font-size: 24px;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        /* Controls */
-        #controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .control-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Lexend', sans-serif;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Sensitivity Slider */
-        .sensitivity-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .sensitivity-label {
-            font-size: 12px;
-            white-space: nowrap;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .sensitivity-slider {
-            flex: 1;
-            height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            outline: none;
-        }
-
-        .sensitivity-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .sensitivity-slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
-        .sensitivity-value {
-            font-size: 12px;
-            font-weight: 600;
-            min-width: 35px;
-            text-align: right;
-        }
-
-        /* Status */
-        #status {
-            background: rgba(158, 158, 158, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            text-align: center;
-        }
-
-        #status.active {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
-        }
-
-        #status.error {
-            background: rgba(244, 67, 54, 0.2);
-            color: #f44336;
-        }
-
-        /* Content Area */
-        #contentWrapper {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            background: white;
-        }
-
-        #stabilizedContent {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            transition: transform 0.016s linear;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #stabilizedContent.no-stabilization {
-            position: relative;
-        }
-
-        /* Reading Content - UPDATED WITH BUFFER ZONE */
-        .reading-content {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            line-height: 1.9;
             font-size: 20px;
-            color: var(--text-dark);
-            letter-spacing: 0.02em;
-            transition: padding 0.3s ease;
         }
 
-        /* Buffer zone when stabilizing - prevents text cutoff at edges */
-        #stabilizedContent.stabilizing .reading-content {
-            padding: 60px var(--buffer-zone); /* Larger side padding for buffer */
+        .size-options {
+            grid-template-columns: 1fr;
         }
 
-        .reading-content.large-text {
-            font-size: 26px;
-            line-height: 2.0;
-            letter-spacing: 0.03em;
+        /* Adjust buffer zone for smaller screens */
+        :root {
+            --buffer-zone: 40px;
         }
+    }
 
-        .reading-content h1 {
-            font-size: 2em;
-            font-weight: 600;
-            margin-bottom: 0.5em;
-            color: var(--primary-color);
-            line-height: 1.3;
+    @media (max-width: 400px) {
+        /* Even smaller buffer for very small screens */
+        :root {
+            --buffer-zone: 30px;
         }
+    }
+</style>
+```
 
-        .reading-content h2 {
-            font-size: 1.5em;
-            font-weight: 600;
-            margin-top: 1.5em;
-            margin-bottom: 0.7em;
-            color: var(--primary-dark);
-            line-height: 1.4;
-        }
-
-        .reading-content p {
-            margin-bottom: 1.2em;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid var(--primary-color);
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 4px;
-        }
-
-        .info-box strong {
-            color: var(--primary-dark);
-        }
-
-        /* Settings Panel */
-        #settingsPanel {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 320px;
-            max-width: 90vw;
-            height: 100vh;
-            background: var(--bg-medium);
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
-            z-index: 200;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            color: white;
-        }
-
-        #settingsPanel.open {
-            right: 0;
-        }
-
-        .settings-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .settings-header h2 {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .settings-content {
-            padding: 20px;
-        }
-
-        .setting-group {
-            margin-bottom: 25px;
-        }
-
-        .setting-group h3 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .setting-item {
-            margin-bottom: 15px;
-        }
-
-        .setting-label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .toggle-switch input {
-            position: relative;
-            width: 50px;
-            height: 26px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 26px;
-            outline: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .toggle-switch input:checked {
-            background: var(--success-color);
-        }
-
-        .toggle-switch input::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            top: 4px;
-            left: 4px;
-            background: white;
-            transition: 0.3s;
-        }
-
-        .toggle-switch input:checked::before {
-            left: 28px;
-        }
-
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 150;
-        }
-
-        #overlay.show {
-            display: block;
-        }
-
-        /* Demo Overlay */
-        #demoOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 300;
-        }
-
-        #demoOverlay.show {
-            display: block;
-        }
-
-        #demoSquare {
-            width: 100px;
-            height: 100px;
-            background: black;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -50px 0 0 -50px;
-            transition: transform 0.016s linear;
-        }
-
-        #demoGhost {
-            width: 100px;
-            height: 100px;
-            background: black;
-            opacity: 0.7;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -50px 0 0 -50px;
-            display: none;
-            transition: transform 0.016s linear;
-        }
-
-        #demoControls {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-        }
-
-        .demo-btn {
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Lexend', sans-serif;
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        .demo-btn:active {
-            transform: scale(0.98);
-        }
-
-        .demo-btn.secondary {
-            background: #666;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .wizard-content {
-                padding: 20px 15px;
-            }
-            
-            .step-title {
-                font-size: 20px;
-            }
-
-            .size-options {
-                grid-template-columns: 1fr;
-            }
-
-            /* Adjust buffer zone for smaller screens */
-            :root {
-                --buffer-zone: 40px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            /* Even smaller buffer for very small screens */
-            :root {
-                --buffer-zone: 30px;
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Calibration Wizard -->
@@ -869,900 +873,903 @@
             </div>
         </div>
 
-        <div class="wizard-content">
-            <!-- Step 0: Welcome -->
-            <div class="wizard-step active" data-step="0">
-                <div class="step-title">Let's personalize your reading experience</div>
-                <div class="step-description">
-                    This quick setup takes about 30 seconds and helps us adjust everything just right for you.
-                </div>
-
-                <div class="info-box" style="background: rgba(255, 255, 255, 0.15); border-color: white; color: white;">
-                    <strong style="color: white;">What we'll do:</strong><br>
-                    • Choose your preferred font<br>
-                    • Select your ideal text size<br>
-                    • Calibrate stabilization to your needs
-                </div>
-
-                <div class="wizard-buttons">
-                    <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Let's Begin</button>
-                </div>
-                <div class="skip-btn" onclick="skipCalibration()">Skip setup</div>
+```
+    <div class="wizard-content">
+        <!-- Step 0: Welcome -->
+        <div class="wizard-step active" data-step="0">
+            <div class="step-title">Let's personalize your reading experience</div>
+            <div class="step-description">
+                This quick setup takes about 30 seconds and helps us adjust everything just right for you.
             </div>
 
-            <!-- Step 1: Font Selection -->
-            <div class="wizard-step" data-step="1">
-                <div class="step-title">Choose Your Font</div>
-                <div class="step-description">
-                    Pick the font that feels most comfortable to read.
-                </div>
-
-                <div class="font-options">
-                    <div class="font-option selected" data-font="lexend" onclick="selectFont('lexend')">
-                        <div class="font-option-header">
-                            <span class="font-name">Lexend</span>
-                            <span class="font-badge">Recommended</span>
-                        </div>
-                        <div class="font-preview font-lexend">
-                            The quick brown fox jumps over the lazy dog
-                        </div>
-                    </div>
-
-                    <div class="font-option" data-font="arial" onclick="selectFont('arial')">
-                        <div class="font-option-header">
-                            <span class="font-name">Arial</span>
-                            <span class="font-badge">Classic</span>
-                        </div>
-                        <div class="font-preview font-arial">
-                            The quick brown fox jumps over the lazy dog
-                        </div>
-                    </div>
-
-                    <div class="font-option" data-font="verdana" onclick="selectFont('verdana')">
-                        <div class="font-option-header">
-                            <span class="font-name">Verdana</span>
-                            <span class="font-badge">Wide spacing</span>
-                        </div>
-                        <div class="font-preview font-verdana">
-                            The quick brown fox jumps over the lazy dog
-                        </div>
-                    </div>
-
-                    <div class="font-option" data-font="opensans" onclick="selectFont('opensans')">
-                        <div class="font-option-header">
-                            <span class="font-name">Open Sans</span>
-                            <span class="font-badge">Modern</span>
-                        </div>
-                        <div class="font-preview font-opensans">
-                            The quick brown fox jumps over the lazy dog
-                        </div>
-                    </div>
-
-                    <div class="font-option" data-font="comic" onclick="selectFont('comic')">
-                        <div class="font-option-header">
-                            <span class="font-name">Comic Sans</span>
-                            <span class="font-badge">Dyslexia-friendly</span>
-                        </div>
-                        <div class="font-preview font-comic">
-                            The quick brown fox jumps over the lazy dog
-                        </div>
-                    </div>
-                </div>
-
-                <div class="wizard-buttons">
-                    <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
-                    <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Continue</button>
-                </div>
+            <div class="info-box" style="background: rgba(255, 255, 255, 0.15); border-color: white; color: white;">
+                <strong style="color: white;">What we'll do:</strong><br>
+                • Choose your preferred font<br>
+                • Select your ideal text size<br>
+                • Calibrate stabilization to your needs
             </div>
 
-            <!-- Step 2: Size Selection -->
-            <div class="wizard-step" data-step="2">
-                <div class="step-title">Choose Your Text Size</div>
-                <div class="step-description">
-                    Select the size that's easiest for you to read.
-                </div>
-
-                <div class="size-options">
-                    <div class="size-option" data-size="18" onclick="selectSize(18)">
-                        <div class="size-label">Small</div>
-                        <div class="size-value">18px</div>
-                    </div>
-                    <div class="size-option selected" data-size="20" onclick="selectSize(20)">
-                        <div class="size-label">Medium</div>
-                        <div class="size-value">20px</div>
-                    </div>
-                    <div class="size-option" data-size="24" onclick="selectSize(24)">
-                        <div class="size-label">Large</div>
-                        <div class="size-value">24px</div>
-                    </div>
-                    <div class="size-option" data-size="28" onclick="selectSize(28)">
-                        <div class="size-label">Extra Large</div>
-                        <div class="size-value">28px</div>
-                    </div>
-                </div>
-
-                <div class="size-preview">
-                    <div class="size-preview-text" id="sizePreviewText" style="font-size: 20px;">
-                        This is how your text will look. Reading should feel comfortable and easy on your eyes.
-                    </div>
-                </div>
-
-                <div class="wizard-buttons">
-                    <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
-                    <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Continue</button>
-                </div>
+            <div class="wizard-buttons">
+                <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Let's Begin</button>
             </div>
-
-            <!-- Step 3: Calibration Test -->
-            <div class="wizard-step" data-step="3">
-                <div class="step-title">Quick Calibration</div>
-                <div class="step-description">
-                    Everyone's hands are different. Let's figure out the perfect settings for yours.
-                </div>
-
-                <div class="calibration-test">
-                    <div class="test-circle" id="testCircle">
-                        <div class="countdown" id="countdown">10</div>
-                    </div>
-                    <p style="opacity: 0.9; margin-bottom: 20px;" id="testInstructions">
-                        Hold your phone naturally, as you would when reading.
-                    </p>
-                </div>
-
-                <div class="wizard-buttons">
-                    <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
-                    <button class="wizard-btn wizard-btn-primary" id="startTestBtn" onclick="startCalibrationTest()">Start Test</button>
-                </div>
-            </div>
-
-            <!-- Step 4: Results -->
-            <div class="wizard-step" data-step="4">
-                <div class="step-title">Your Personalized Settings</div>
-                <div class="step-description">
-                    We've configured everything based on your preferences.
-                </div>
-
-                <div class="results-card">
-                    <div class="result-item">
-                        <span class="result-label">Font</span>
-                        <span class="result-value" id="resultFont">Lexend</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Text Size</span>
-                        <span class="result-value" id="resultSize">20px</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Stabilization</span>
-                        <span class="result-value" id="resultStability">Moderate</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Recommended Sensitivity</span>
-                        <span class="result-value" id="resultSensitivity">25</span>
-                    </div>
-                </div>
-
-                <div class="info-box" style="background: rgba(255, 255, 255, 0.15); border-color: white; color: white;">
-                    <strong style="color: white;">Ready to go!</strong><br>
-                    You can always adjust these settings later from the menu.
-                </div>
-
-                <div class="wizard-buttons">
-                    <button class="wizard-btn wizard-btn-secondary" onclick="restartCalibration()">Start Over</button>
-                    <button class="wizard-btn wizard-btn-primary" onclick="finishCalibration()">Start Reading</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div id="header">
-        <div class="header-top">
-            <div class="logo">
-                <span class="logo-icon">📖</span>
-                <span>SteadyRead</span>
-            </div>
-            <button class="menu-btn" id="menuBtn" aria-label="Settings">⚙️</button>
+            <div class="skip-btn" onclick="skipCalibration()">Skip setup</div>
         </div>
 
-        <div id="controls">
-            <div class="control-row">
-                <button class="btn btn-primary" id="startButton">Enable Stabilization</button>
-                <button class="btn btn-danger hidden" id="stopButton">Disable</button>
-                <button class="btn btn-small" id="recalibrateBtn">Recalibrate</button>
+        <!-- Step 1: Font Selection -->
+        <div class="wizard-step" data-step="1">
+            <div class="step-title">Choose Your Font</div>
+            <div class="step-description">
+                Pick the font that feels most comfortable to read.
             </div>
 
-            <div class="control-row">
-                <div class="sensitivity-control">
-                    <span class="sensitivity-label">Sensitivity:</span>
-                    <input type="range" class="sensitivity-slider" id="sensitivitySlider" 
-                           min="10" max="50" value="25" step="5">
-                    <span class="sensitivity-value" id="sensitivityValue">25</span>
+            <div class="font-options">
+                <div class="font-option selected" data-font="lexend" onclick="selectFont('lexend')">
+                    <div class="font-option-header">
+                        <span class="font-name">Lexend</span>
+                        <span class="font-badge">Recommended</span>
+                    </div>
+                    <div class="font-preview font-lexend">
+                        The quick brown fox jumps over the lazy dog
+                    </div>
+                </div>
+
+                <div class="font-option" data-font="arial" onclick="selectFont('arial')">
+                    <div class="font-option-header">
+                        <span class="font-name">Arial</span>
+                        <span class="font-badge">Classic</span>
+                    </div>
+                    <div class="font-preview font-arial">
+                        The quick brown fox jumps over the lazy dog
+                    </div>
+                </div>
+
+                <div class="font-option" data-font="verdana" onclick="selectFont('verdana')">
+                    <div class="font-option-header">
+                        <span class="font-name">Verdana</span>
+                        <span class="font-badge">Wide spacing</span>
+                    </div>
+                    <div class="font-preview font-verdana">
+                        The quick brown fox jumps over the lazy dog
+                    </div>
+                </div>
+
+                <div class="font-option" data-font="opensans" onclick="selectFont('opensans')">
+                    <div class="font-option-header">
+                        <span class="font-name">Open Sans</span>
+                        <span class="font-badge">Modern</span>
+                    </div>
+                    <div class="font-preview font-opensans">
+                        The quick brown fox jumps over the lazy dog
+                    </div>
+                </div>
+
+                <div class="font-option" data-font="comic" onclick="selectFont('comic')">
+                    <div class="font-option-header">
+                        <span class="font-name">Comic Sans</span>
+                        <span class="font-badge">Dyslexia-friendly</span>
+                    </div>
+                    <div class="font-preview font-comic">
+                        The quick brown fox jumps over the lazy dog
+                    </div>
                 </div>
             </div>
 
-            <div id="status">Tap "Enable Stabilization" to begin</div>
+            <div class="wizard-buttons">
+                <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
+                <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Continue</button>
+            </div>
         </div>
-    </div>
 
-    <div id="contentWrapper">
-        <div id="stabilizedContent">
-            <div class="reading-content" id="readingContent">
-                <h1>Welcome to SteadyRead</h1>
-                
-                <div class="info-box">
-                    <strong>How it works:</strong> SteadyRead uses your device's motion sensors to detect shaking, then moves the content in the opposite direction to keep it visually stable. We've added extra padding on the sides to ensure text never gets cut off at the edges.
+        <!-- Step 2: Size Selection -->
+        <div class="wizard-step" data-step="2">
+            <div class="step-title">Choose Your Text Size</div>
+            <div class="step-description">
+                Select the size that's easiest for you to read.
+            </div>
+
+            <div class="size-options">
+                <div class="size-option" data-size="18" onclick="selectSize(18)">
+                    <div class="size-label">Small</div>
+                    <div class="size-value">18px</div>
                 </div>
+                <div class="size-option selected" data-size="20" onclick="selectSize(20)">
+                    <div class="size-label">Medium</div>
+                    <div class="size-value">20px</div>
+                </div>
+                <div class="size-option" data-size="24" onclick="selectSize(24)">
+                    <div class="size-label">Large</div>
+                    <div class="size-value">24px</div>
+                </div>
+                <div class="size-option" data-size="28" onclick="selectSize(28)">
+                    <div class="size-label">Extra Large</div>
+                    <div class="size-value">28px</div>
+                </div>
+            </div>
 
-                <p>This app is designed to help people with hand tremors read comfortably on their mobile devices. Whether you have Essential Tremor, Parkinson's disease, or any condition that causes hand shaking, SteadyRead aims to make reading easier.</p>
+            <div class="size-preview">
+                <div class="size-preview-text" id="sizePreviewText" style="font-size: 20px;">
+                    This is how your text will look. Reading should feel comfortable and easy on your eyes.
+                </div>
+            </div>
 
-                <h2>Getting Started</h2>
+            <div class="wizard-buttons">
+                <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
+                <button class="wizard-btn wizard-btn-primary" onclick="nextStep()">Continue</button>
+            </div>
+        </div>
 
-                <p>To use SteadyRead, tap <strong>"Enable Stabilization"</strong> and grant motion sensor permission when prompted. The text will automatically adjust to stay steady as you hold your device.</p>
+        <!-- Step 3: Calibration Test -->
+        <div class="wizard-step" data-step="3">
+            <div class="step-title">Quick Calibration</div>
+            <div class="step-description">
+                Everyone's hands are different. Let's figure out the perfect settings for yours.
+            </div>
 
-                <p>You can adjust the sensitivity at any time using the slider above. Lower values work better for mild tremors, while higher values help with more pronounced shaking.</p>
-
-                <h2>Your Comfort Matters</h2>
-
-                <p>Everyone experiences tremors differently. That's why we've personalized your settings based on your preferences. If something doesn't feel quite right, you can always adjust it in the settings menu or run the calibration again.</p>
-
-                <p>Try gently shaking your device while reading this text. You should notice the content remains relatively steady despite the movement, and importantly, the text should never disappear off the edges of your screen.</p>
-
-                <h2>Privacy First</h2>
-
-                <p>SteadyRead runs entirely in your browser. No data is collected, stored, or transmitted. All motion sensor data is processed locally on your device in real-time and is never saved or shared.</p>
-
-                <p style="margin-top: 40px; padding: 20px; background: #f0f0f0; border-radius: 8px; text-align: center;">
-                    <strong>Ready to experience stable reading?</strong><br>
-                    Enable stabilization and feel the difference!
+            <div class="calibration-test">
+                <div class="test-circle" id="testCircle">
+                    <div class="countdown" id="countdown">10</div>
+                </div>
+                <p style="opacity: 0.9; margin-bottom: 20px;" id="testInstructions">
+                    Hold your phone naturally, as you would when reading.
                 </p>
             </div>
+
+            <div class="wizard-buttons">
+                <button class="wizard-btn wizard-btn-secondary" onclick="prevStep()">Back</button>
+                <button class="wizard-btn wizard-btn-primary" id="startTestBtn" onclick="startCalibrationTest()">Start Test</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Results -->
+        <div class="wizard-step" data-step="4">
+            <div class="step-title">Your Personalized Settings</div>
+            <div class="step-description">
+                We've configured everything based on your preferences.
+            </div>
+
+            <div class="results-card">
+                <div class="result-item">
+                    <span class="result-label">Font</span>
+                    <span class="result-value" id="resultFont">Lexend</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Text Size</span>
+                    <span class="result-value" id="resultSize">20px</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Stabilization</span>
+                    <span class="result-value" id="resultStability">Moderate</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Recommended Sensitivity</span>
+                    <span class="result-value" id="resultSensitivity">25</span>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: rgba(255, 255, 255, 0.15); border-color: white; color: white;">
+                <strong style="color: white;">Ready to go!</strong><br>
+                You can always adjust these settings later from the menu.
+            </div>
+
+            <div class="wizard-buttons">
+                <button class="wizard-btn wizard-btn-secondary" onclick="restartCalibration()">Start Over</button>
+                <button class="wizard-btn wizard-btn-primary" onclick="finishCalibration()">Start Reading</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Settings Panel -->
-    <div id="settingsPanel">
-        <div class="settings-header">
-            <h2>Settings</h2>
-            <button class="close-btn" id="closeSettingsBtn">×</button>
+<!-- Main App -->
+<div id="header">
+    <div class="header-top">
+        <div class="logo">
+            <span class="logo-icon">📖</span>
+            <span>SteadyRead</span>
         </div>
-        <div class="settings-content">
-            <div class="setting-group">
-                <h3>Display</h3>
-                <div class="setting-item">
-                    <div class="toggle-switch">
-                        <div>
-                            <div class="setting-label">Large Text Mode</div>
-                        </div>
-                        <input type="checkbox" id="largeTextToggle" checked>
+        <button class="menu-btn" id="menuBtn" aria-label="Settings">⚙️</button>
+    </div>
+
+    <div id="controls">
+        <div class="control-row">
+            <button class="btn btn-primary" id="startButton">Enable Stabilization</button>
+            <button class="btn btn-danger hidden" id="stopButton">Disable</button>
+            <button class="btn btn-small" id="recalibrateBtn">Recalibrate</button>
+        </div>
+
+        <div class="control-row">
+            <div class="sensitivity-control">
+                <span class="sensitivity-label">Sensitivity:</span>
+                <input type="range" class="sensitivity-slider" id="sensitivitySlider" 
+                       min="10" max="50" value="25" step="5">
+                <span class="sensitivity-value" id="sensitivityValue">25</span>
+            </div>
+        </div>
+
+        <div id="status">Tap "Enable Stabilization" to begin</div>
+    </div>
+</div>
+
+<div id="contentWrapper">
+    <div id="stabilizedContent">
+        <div class="reading-content" id="readingContent">
+            <h1>Welcome to SteadyRead</h1>
+            
+            <div class="info-box">
+                <strong>How it works:</strong> SteadyRead uses your device's motion sensors to detect shaking, then moves the content in the opposite direction to keep it visually stable. We've added extra padding on the sides to ensure text never gets cut off at the edges.
+            </div>
+
+            <p>This app is designed to help people with hand tremors read comfortably on their mobile devices. Whether you have Essential Tremor, Parkinson's disease, or any condition that causes hand shaking, SteadyRead aims to make reading easier.</p>
+
+            <h2>Getting Started</h2>
+
+            <p>To use SteadyRead, tap <strong>"Enable Stabilization"</strong> and grant motion sensor permission when prompted. The text will automatically adjust to stay steady as you hold your device.</p>
+
+            <p>You can adjust the sensitivity at any time using the slider above. Lower values work better for mild tremors, while higher values help with more pronounced shaking.</p>
+
+            <h2>Your Comfort Matters</h2>
+
+            <p>Everyone experiences tremors differently. That's why we've personalized your settings based on your preferences. If something doesn't feel quite right, you can always adjust it in the settings menu or run the calibration again.</p>
+
+            <p>Try gently shaking your device while reading this text. You should notice the content remains relatively steady despite the movement, and importantly, the text should never disappear off the edges of your screen.</p>
+
+            <h2>Privacy First</h2>
+
+            <p>SteadyRead runs entirely in your browser. No data is collected, stored, or transmitted. All motion sensor data is processed locally on your device in real-time and is never saved or shared.</p>
+
+            <p style="margin-top: 40px; padding: 20px; background: #f0f0f0; border-radius: 8px; text-align: center;">
+                <strong>Ready to experience stable reading?</strong><br>
+                Enable stabilization and feel the difference!
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Panel -->
+<div id="settingsPanel">
+    <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="close-btn" id="closeSettingsBtn">×</button>
+    </div>
+    <div class="settings-content">
+        <div class="setting-group">
+            <h3>Display</h3>
+            <div class="setting-item">
+                <div class="toggle-switch">
+                    <div>
+                        <div class="setting-label">Large Text Mode</div>
                     </div>
+                    <input type="checkbox" id="largeTextToggle" checked>
                 </div>
             </div>
+        </div>
 
-            <div class="setting-group">
-                <h3>Stabilization</h3>
-                <div class="setting-item">
-                    <div class="toggle-switch">
-                        <div>
-                            <div class="setting-label">Drift Correction</div>
-                        </div>
-                        <input type="checkbox" id="driftCorrectionToggle" checked>
+        <div class="setting-group">
+            <h3>Stabilization</h3>
+            <div class="setting-item">
+                <div class="toggle-switch">
+                    <div>
+                        <div class="setting-label">Drift Correction</div>
                     </div>
+                    <input type="checkbox" id="driftCorrectionToggle" checked>
                 </div>
             </div>
+        </div>
 
-            <div class="setting-group">
-                <h3>Demo</h3>
-                <div class="setting-item">
-                    <button class="btn btn-primary" id="viewDemoBtn" style="width: 100%; padding: 12px;">View Stabilization Demo</button>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h3>About</h3>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;">
-                    <strong>SteadyRead v1.2</strong><br>
-                    Open source tremor stabilization for mobile reading.<br><br>
-                    <em>Now with buffer zones to prevent text cutoff!</em>
-                </p>
+        <div class="setting-group">
+            <h3>Demo</h3>
+            <div class="setting-item">
+                <button class="btn btn-primary" id="viewDemoBtn" style="width: 100%; padding: 12px;">View Stabilization Demo</button>
             </div>
         </div>
-    </div>
 
-    <div id="overlay"></div>
-
-    <!-- Demo Overlay -->
-    <div id="demoOverlay">
-        <div id="demoGhost"></div>
-        <div id="demoSquare"></div>
-        <div id="demoControls">
-            <button class="demo-btn secondary" id="closeDemoBtn">Close Demo</button>
-            <button class="demo-btn" id="toggleDemoBtn">Enable Stabilization</button>
+        <div class="setting-group">
+            <h3>About</h3>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;">
+                <strong>SteadyRead v1.2</strong><br>
+                Open source tremor stabilization for mobile reading.<br><br>
+                <em>Now with buffer zones to prevent text cutoff!</em>
+            </p>
         </div>
     </div>
+</div>
 
-    <script>
-        // Configuration
-        let currentStep = 0;
-        let userSettings = {
-            font: 'lexend',
-            fontSize: 20,
-            sensitivity: 25,
-            largeText: true,
-            driftCorrection: true
-        };
+<div id="overlay"></div>
 
-        // Calibration test variables
-        let calibrationData = {
-            samples: [],
-            avgAmplitude: 0,
-            avgFrequency: 0
-        };
+<!-- Demo Overlay -->
+<div id="demoOverlay">
+    <div id="demoGhost"></div>
+    <div id="demoSquare"></div>
+    <div id="demoControls">
+        <button class="demo-btn secondary" id="closeDemoBtn">Close Demo</button>
+        <button class="demo-btn" id="toggleDemoBtn">Enable Stabilization</button>
+    </div>
+</div>
 
-        // Check if user has completed calibration before
-        const hasCalibrated = localStorage.getItem('steadyread_calibrated');
-        if (hasCalibrated) {
-            const savedSettings = JSON.parse(localStorage.getItem('steadyread_settings'));
-            if (savedSettings) {
-                userSettings = savedSettings;
-                applySettings();
+<script>
+    // Configuration
+    let currentStep = 0;
+    let userSettings = {
+        font: 'lexend',
+        fontSize: 20,
+        sensitivity: 25,
+        largeText: true,
+        driftCorrection: true
+    };
+
+    // Calibration test variables
+    let calibrationData = {
+        samples: [],
+        avgAmplitude: 0,
+        avgFrequency: 0
+    };
+
+    // Check if user has completed calibration before
+    const hasCalibrated = localStorage.getItem('steadyread_calibrated');
+    if (hasCalibrated) {
+        const savedSettings = JSON.parse(localStorage.getItem('steadyread_settings'));
+        if (savedSettings) {
+            userSettings = savedSettings;
+            applySettings();
+        }
+        document.getElementById('calibrationWizard').classList.add('hidden');
+    }
+
+    // Wizard Navigation
+    function nextStep() {
+        const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+        currentStepEl.classList.remove('active');
+        
+        currentStep++;
+        
+        const nextStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+        nextStepEl.classList.add('active');
+        
+        updateProgress();
+    }
+
+    function prevStep() {
+        const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+        currentStepEl.classList.remove('active');
+        
+        currentStep--;
+        
+        const prevStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+        prevStepEl.classList.add('active');
+        
+        updateProgress();
+    }
+
+    function updateProgress() {
+        document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+            if (index <= currentStep) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
             }
+        });
+    }
+
+    // Font Selection
+    function selectFont(font) {
+        userSettings.font = font;
+        document.querySelectorAll('.font-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelector(`.font-option[data-font="${font}"]`).classList.add('selected');
+        
+        // Update preview
+        const previewText = document.getElementById('sizePreviewText');
+        previewText.className = `size-preview-text font-${font}`;
+    }
+
+    // Size Selection
+    function selectSize(size) {
+        userSettings.fontSize = size;
+        document.querySelectorAll('.size-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelector(`.size-option[data-size="${size}"]`).classList.add('selected');
+        
+        // Update preview
+        const previewText = document.getElementById('sizePreviewText');
+        previewText.style.fontSize = size + 'px';
+    }
+
+    // Calibration Test
+    async function startCalibrationTest() {
+        const startBtn = document.getElementById('startTestBtn');
+        const testCircle = document.getElementById('testCircle');
+        const countdown = document.getElementById('countdown');
+        const instructions = document.getElementById('testInstructions');
+        
+        startBtn.disabled = true;
+        instructions.textContent = 'Just relax and hold your phone naturally...';
+        testCircle.classList.add('measuring');
+        
+        // Request permission first
+        try {
+            if (typeof DeviceMotionEvent !== 'undefined' && 
+                typeof DeviceMotionEvent.requestPermission === 'function') {
+                const permission = await DeviceMotionEvent.requestPermission();
+                if (permission !== 'granted') {
+                    instructions.textContent = 'Permission denied. Please enable motion sensors.';
+                    startBtn.disabled = false;
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Permission error:', error);
+        }
+
+        calibrationData.samples = [];
+        let timeLeft = 10;
+        
+        const calibrationHandler = (event) => {
+            const accel = event.accelerationIncludingGravity;
+            if (accel) {
+                const magnitude = Math.sqrt(
+                    Math.pow(accel.x || 0, 2) + 
+                    Math.pow(accel.y || 0, 2) + 
+                    Math.pow(accel.z || 0, 2)
+                );
+                calibrationData.samples.push(magnitude);
+            }
+        };
+
+        window.addEventListener('devicemotion', calibrationHandler);
+
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+            countdown.textContent = timeLeft;
+            
+            if (timeLeft === 0) {
+                clearInterval(countdownInterval);
+                window.removeEventListener('devicemotion', calibrationHandler);
+                testCircle.classList.remove('measuring');
+                analyzeCalibration();
+                nextStep();
+            }
+        }, 1000);
+    }
+
+    function analyzeCalibration() {
+        if (calibrationData.samples.length === 0) {
+            userSettings.sensitivity = 25;
+            return;
+        }
+
+        // Calculate average amplitude
+        const sum = calibrationData.samples.reduce((a, b) => a + b, 0);
+        calibrationData.avgAmplitude = sum / calibrationData.samples.length;
+        
+        // Determine sensitivity based on amplitude
+        // Higher amplitude = higher sensitivity needed
+        if (calibrationData.avgAmplitude < 10.5) {
+            userSettings.sensitivity = 15;
+        } else if (calibrationData.avgAmplitude < 11.0) {
+            userSettings.sensitivity = 25;
+        } else if (calibrationData.avgAmplitude < 11.5) {
+            userSettings.sensitivity = 35;
+        } else {
+            userSettings.sensitivity = 45;
+        }
+
+        // Update results display
+        document.getElementById('resultFont').textContent = getFontDisplayName(userSettings.font);
+        document.getElementById('resultSize').textContent = userSettings.fontSize + 'px';
+        document.getElementById('resultSensitivity').textContent = userSettings.sensitivity;
+        
+        let stabilityLevel = 'Light';
+        if (userSettings.sensitivity >= 35) stabilityLevel = 'Strong';
+        else if (userSettings.sensitivity >= 25) stabilityLevel = 'Moderate';
+        
+        document.getElementById('resultStability').textContent = stabilityLevel;
+    }
+
+    function getFontDisplayName(font) {
+        const names = {
+            'lexend': 'Lexend',
+            'arial': 'Arial',
+            'verdana': 'Verdana',
+            'opensans': 'Open Sans',
+            'comic': 'Comic Sans'
+        };
+        return names[font] || 'Lexend';
+    }
+
+    function finishCalibration() {
+        try {
+            // Save settings
+            localStorage.setItem('steadyread_calibrated', 'true');
+            localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
+            
+            // Apply settings
+            applySettings();
+            
+            // Hide wizard
+            document.getElementById('calibrationWizard').classList.add('hidden');
+            
+            // Auto-start stabilization after calibration
+            setTimeout(() => {
+                startStabilization();
+            }, 300);
+            
+            console.log('Calibration finished successfully');
+        } catch (error) {
+            console.error('Error finishing calibration:', error);
+            // Still try to hide wizard even if there's an error
             document.getElementById('calibrationWizard').classList.add('hidden');
         }
+    }
 
-        // Wizard Navigation
-        function nextStep() {
-            const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            currentStepEl.classList.remove('active');
-            
-            currentStep++;
-            
-            const nextStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            nextStepEl.classList.add('active');
-            
-            updateProgress();
-        }
+    function skipCalibration() {
+        finishCalibration();
+    }
 
-        function prevStep() {
-            const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            currentStepEl.classList.remove('active');
-            
-            currentStep--;
-            
-            const prevStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            prevStepEl.classList.add('active');
-            
-            updateProgress();
-        }
-
-        function updateProgress() {
-            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
-                if (index <= currentStep) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        // Font Selection
-        function selectFont(font) {
-            userSettings.font = font;
-            document.querySelectorAll('.font-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            document.querySelector(`.font-option[data-font="${font}"]`).classList.add('selected');
-            
-            // Update preview
-            const previewText = document.getElementById('sizePreviewText');
-            previewText.className = `size-preview-text font-${font}`;
-        }
-
-        // Size Selection
-        function selectSize(size) {
-            userSettings.fontSize = size;
-            document.querySelectorAll('.size-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            document.querySelector(`.size-option[data-size="${size}"]`).classList.add('selected');
-            
-            // Update preview
-            const previewText = document.getElementById('sizePreviewText');
-            previewText.style.fontSize = size + 'px';
-        }
-
-        // Calibration Test
-        async function startCalibrationTest() {
-            const startBtn = document.getElementById('startTestBtn');
-            const testCircle = document.getElementById('testCircle');
-            const countdown = document.getElementById('countdown');
-            const instructions = document.getElementById('testInstructions');
-            
-            startBtn.disabled = true;
-            instructions.textContent = 'Just relax and hold your phone naturally...';
-            testCircle.classList.add('measuring');
-            
-            // Request permission first
-            try {
-                if (typeof DeviceMotionEvent !== 'undefined' && 
-                    typeof DeviceMotionEvent.requestPermission === 'function') {
-                    const permission = await DeviceMotionEvent.requestPermission();
-                    if (permission !== 'granted') {
-                        instructions.textContent = 'Permission denied. Please enable motion sensors.';
-                        startBtn.disabled = false;
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.error('Permission error:', error);
-            }
-
-            calibrationData.samples = [];
-            let timeLeft = 10;
-            
-            const calibrationHandler = (event) => {
-                const accel = event.accelerationIncludingGravity;
-                if (accel) {
-                    const magnitude = Math.sqrt(
-                        Math.pow(accel.x || 0, 2) + 
-                        Math.pow(accel.y || 0, 2) + 
-                        Math.pow(accel.z || 0, 2)
-                    );
-                    calibrationData.samples.push(magnitude);
-                }
-            };
-
-            window.addEventListener('devicemotion', calibrationHandler);
-
-            const countdownInterval = setInterval(() => {
-                timeLeft--;
-                countdown.textContent = timeLeft;
-                
-                if (timeLeft === 0) {
-                    clearInterval(countdownInterval);
-                    window.removeEventListener('devicemotion', calibrationHandler);
-                    testCircle.classList.remove('measuring');
-                    analyzeCalibration();
-                    nextStep();
-                }
-            }, 1000);
-        }
-
-        function analyzeCalibration() {
-            if (calibrationData.samples.length === 0) {
-                userSettings.sensitivity = 25;
-                return;
-            }
-
-            // Calculate average amplitude
-            const sum = calibrationData.samples.reduce((a, b) => a + b, 0);
-            calibrationData.avgAmplitude = sum / calibrationData.samples.length;
-            
-            // Determine sensitivity based on amplitude
-            // Higher amplitude = higher sensitivity needed
-            if (calibrationData.avgAmplitude < 10.5) {
-                userSettings.sensitivity = 15;
-            } else if (calibrationData.avgAmplitude < 11.0) {
-                userSettings.sensitivity = 25;
-            } else if (calibrationData.avgAmplitude < 11.5) {
-                userSettings.sensitivity = 35;
-            } else {
-                userSettings.sensitivity = 45;
-            }
-
-            // Update results display
-            document.getElementById('resultFont').textContent = getFontDisplayName(userSettings.font);
-            document.getElementById('resultSize').textContent = userSettings.fontSize + 'px';
-            document.getElementById('resultSensitivity').textContent = userSettings.sensitivity;
-            
-            let stabilityLevel = 'Light';
-            if (userSettings.sensitivity >= 35) stabilityLevel = 'Strong';
-            else if (userSettings.sensitivity >= 25) stabilityLevel = 'Moderate';
-            
-            document.getElementById('resultStability').textContent = stabilityLevel;
-        }
-
-        function getFontDisplayName(font) {
-            const names = {
-                'lexend': 'Lexend',
-                'arial': 'Arial',
-                'verdana': 'Verdana',
-                'opensans': 'Open Sans',
-                'comic': 'Comic Sans'
-            };
-            return names[font] || 'Lexend';
-        }
-
-        function finishCalibration() {
-            try {
-                // Save settings
-                localStorage.setItem('steadyread_calibrated', 'true');
-                localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
-                
-                // Apply settings
-                applySettings();
-                
-                // Hide wizard
-                document.getElementById('calibrationWizard').classList.add('hidden');
-                
-                // Auto-start stabilization after calibration
-                setTimeout(() => {
-                    startStabilization();
-                }, 300);
-                
-                console.log('Calibration finished successfully');
-            } catch (error) {
-                console.error('Error finishing calibration:', error);
-                // Still try to hide wizard even if there's an error
-                document.getElementById('calibrationWizard').classList.add('hidden');
-            }
-        }
-
-        function skipCalibration() {
-            finishCalibration();
-        }
-
-        function restartCalibration() {
-            currentStep = 0;
-            document.querySelectorAll('.wizard-step').forEach(step => {
-                step.classList.remove('active');
-            });
-            document.querySelector('.wizard-step[data-step="0"]').classList.add('active');
-            updateProgress();
-            
-            // Reset calibration test state
-            document.getElementById('countdown').textContent = '10';
-            document.getElementById('startTestBtn').disabled = false;
-            document.getElementById('testCircle').classList.remove('measuring');
-            document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
-        }
-
-        function applySettings() {
-            try {
-                // Apply font
-                const fontClasses = {
-                    'lexend': 'font-lexend',
-                    'arial': 'font-arial',
-                    'verdana': 'font-verdana',
-                    'opensans': 'font-opensans',
-                    'comic': 'font-comic'
-                };
-                
-                const readingContent = document.getElementById('readingContent');
-                if (readingContent) {
-                    readingContent.className = 'reading-content ' + fontClasses[userSettings.font];
-                    
-                    // Apply font size
-                    readingContent.style.fontSize = userSettings.fontSize + 'px';
-                }
-                
-                // Apply sensitivity
-                const sensitivitySlider = document.getElementById('sensitivitySlider');
-                const sensitivityValue = document.getElementById('sensitivityValue');
-                if (sensitivitySlider && sensitivityValue) {
-                    sensitivitySlider.value = userSettings.sensitivity;
-                    sensitivityValue.textContent = userSettings.sensitivity;
-                    sensitivity = userSettings.sensitivity;
-                }
-                
-                // Apply toggles
-                const largeTextToggle = document.getElementById('largeTextToggle');
-                const driftCorrectionToggle = document.getElementById('driftCorrectionToggle');
-                if (largeTextToggle) largeTextToggle.checked = userSettings.largeText;
-                if (driftCorrectionToggle) driftCorrectionToggle.checked = userSettings.driftCorrection;
-                
-                console.log('Settings applied:', userSettings);
-            } catch (error) {
-                console.error('Error applying settings:', error);
-            }
-        }
-
-        // Recalibrate button
-        document.getElementById('recalibrateBtn').addEventListener('click', () => {
-            // Reset calibration test state
-            document.getElementById('countdown').textContent = '10';
-            document.getElementById('startTestBtn').disabled = false;
-            document.getElementById('testCircle').classList.remove('measuring');
-            document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
-            
-            document.getElementById('calibrationWizard').classList.remove('hidden');
-            restartCalibration();
+    function restartCalibration() {
+        currentStep = 0;
+        document.querySelectorAll('.wizard-step').forEach(step => {
+            step.classList.remove('active');
         });
-
-        // Stabilization code
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-        const stabilizedContent = document.getElementById('stabilizedContent');
-        const readingContent = document.getElementById('readingContent');
-        const status = document.getElementById('status');
-        const sensitivitySlider = document.getElementById('sensitivitySlider');
-        const sensitivityValue = document.getElementById('sensitivityValue');
-        const menuBtn = document.getElementById('menuBtn');
-        const settingsPanel = document.getElementById('settingsPanel');
-        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-        const overlay = document.getElementById('overlay');
-        const largeTextToggle = document.getElementById('largeTextToggle');
-        const driftCorrectionToggle = document.getElementById('driftCorrectionToggle');
-
-        let isStabilizing = false;
-        let offsetX = 0;
-        let offsetY = 0;
-        let velocityX = 0;
-        let velocityY = 0;
+        document.querySelector('.wizard-step[data-step="0"]').classList.add('active');
+        updateProgress();
         
-        // Track scroll position when stabilization starts
-        let baselineScrollY = 0;
-        
-        let sensitivity = userSettings.sensitivity;
-        let smoothing = 0.85;
-        let driftCorrection = 0.995;
-        const maxOffset = 50;
+        // Reset calibration test state
+        document.getElementById('countdown').textContent = '10';
+        document.getElementById('startTestBtn').disabled = false;
+        document.getElementById('testCircle').classList.remove('measuring');
+        document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
+    }
 
-        sensitivitySlider.addEventListener('input', (e) => {
-            sensitivity = parseFloat(e.target.value);
-            sensitivityValue.textContent = sensitivity;
-            userSettings.sensitivity = sensitivity;
-            localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
-        });
-
-        function updateStabilization() {
-            if (!isStabilizing) return;
-
-            if (driftCorrectionToggle.checked) {
-                offsetX *= driftCorrection;
-                offsetY *= driftCorrection;
-            }
-
-            offsetX += velocityX;
-            offsetY += velocityY;
-
-            offsetX = Math.max(-maxOffset, Math.min(maxOffset, offsetX));
-            offsetY = Math.max(-maxOffset, Math.min(maxOffset, offsetY));
-
-            stabilizedContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-
-            requestAnimationFrame(updateStabilization);
-        }
-
-        function handleMotion(event) {
-            if (!isStabilizing) return;
-
-            const accel = event.accelerationIncludingGravity;
+    function applySettings() {
+        try {
+            // Apply font
+            const fontClasses = {
+                'lexend': 'font-lexend',
+                'arial': 'font-arial',
+                'verdana': 'font-verdana',
+                'opensans': 'font-opensans',
+                'comic': 'font-comic'
+            };
             
-            if (accel) {
-                const accelX = accel.x || 0;
-                const accelY = accel.y || 0;
-
-                const targetVelX = -accelX * sensitivity * 0.1;
-                const targetVelY = -accelY * sensitivity * 0.1;
+            const readingContent = document.getElementById('readingContent');
+            if (readingContent) {
+                readingContent.className = 'reading-content ' + fontClasses[userSettings.font];
                 
-                velocityX = velocityX * smoothing + targetVelX * (1 - smoothing);
-                velocityY = velocityY * smoothing + targetVelY * (1 - smoothing);
+                // Apply font size
+                readingContent.style.fontSize = userSettings.fontSize + 'px';
             }
+            
+            // Apply sensitivity
+            const sensitivitySlider = document.getElementById('sensitivitySlider');
+            const sensitivityValue = document.getElementById('sensitivityValue');
+            if (sensitivitySlider && sensitivityValue) {
+                sensitivitySlider.value = userSettings.sensitivity;
+                sensitivityValue.textContent = userSettings.sensitivity;
+                sensitivity = userSettings.sensitivity;
+            }
+            
+            // Apply toggles
+            const largeTextToggle = document.getElementById('largeTextToggle');
+            const driftCorrectionToggle = document.getElementById('driftCorrectionToggle');
+            if (largeTextToggle) largeTextToggle.checked = userSettings.largeText;
+            if (driftCorrectionToggle) driftCorrectionToggle.checked = userSettings.driftCorrection;
+            
+            console.log('Settings applied:', userSettings);
+        } catch (error) {
+            console.error('Error applying settings:', error);
+        }
+    }
+
+    // Recalibrate button
+    document.getElementById('recalibrateBtn').addEventListener('click', () => {
+        // Reset calibration test state
+        document.getElementById('countdown').textContent = '10';
+        document.getElementById('startTestBtn').disabled = false;
+        document.getElementById('testCircle').classList.remove('measuring');
+        document.getElementById('testInstructions').textContent = 'Hold your phone naturally, as you would when reading.';
+        
+        document.getElementById('calibrationWizard').classList.remove('hidden');
+        restartCalibration();
+    });
+
+    // Stabilization code
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const stabilizedContent = document.getElementById('stabilizedContent');
+    const readingContent = document.getElementById('readingContent');
+    const status = document.getElementById('status');
+    const sensitivitySlider = document.getElementById('sensitivitySlider');
+    const sensitivityValue = document.getElementById('sensitivityValue');
+    const menuBtn = document.getElementById('menuBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const overlay = document.getElementById('overlay');
+    const largeTextToggle = document.getElementById('largeTextToggle');
+    const driftCorrectionToggle = document.getElementById('driftCorrectionToggle');
+
+    let isStabilizing = false;
+    let offsetX = 0;
+    let offsetY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    
+    // Track scroll position when stabilization starts
+    let baselineScrollY = 0;
+    
+    let sensitivity = userSettings.sensitivity;
+    let smoothing = 0.85;
+    let driftCorrection = 0.995;
+    const maxOffset = 50;
+
+    sensitivitySlider.addEventListener('input', (e) => {
+        sensitivity = parseFloat(e.target.value);
+        sensitivityValue.textContent = sensitivity;
+        userSettings.sensitivity = sensitivity;
+        localStorage.setItem('steadyread_settings', JSON.stringify(userSettings));
+    });
+
+    function updateStabilization() {
+        if (!isStabilizing) return;
+
+        if (driftCorrectionToggle.checked) {
+            offsetX *= driftCorrection;
+            offsetY *= driftCorrection;
         }
 
-        async function startStabilization() {
-            try {
-                if (typeof DeviceMotionEvent !== 'undefined' && 
-                    typeof DeviceMotionEvent.requestPermission === 'function') {
-                    
-                    const permission = await DeviceMotionEvent.requestPermission();
-                    
-                    if (permission === 'granted') {
-                        activateStabilization();
-                    } else {
-                        updateStatus('❌ Permission denied. Please reload and try again.', 'error');
-                    }
-                } else {
+        offsetX += velocityX;
+        offsetY += velocityY;
+
+        offsetX = Math.max(-maxOffset, Math.min(maxOffset, offsetX));
+        offsetY = Math.max(-maxOffset, Math.min(maxOffset, offsetY));
+
+        stabilizedContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+        requestAnimationFrame(updateStabilization);
+    }
+
+    function handleMotion(event) {
+        if (!isStabilizing) return;
+
+        const accel = event.accelerationIncludingGravity;
+        
+        if (accel) {
+            const accelX = accel.x || 0;
+            const accelY = accel.y || 0;
+
+            const targetVelX = -accelX * sensitivity * 0.1;
+            const targetVelY = -accelY * sensitivity * 0.1;
+            
+            velocityX = velocityX * smoothing + targetVelX * (1 - smoothing);
+            velocityY = velocityY * smoothing + targetVelY * (1 - smoothing);
+        }
+    }
+
+    async function startStabilization() {
+        try {
+            if (typeof DeviceMotionEvent !== 'undefined' && 
+                typeof DeviceMotionEvent.requestPermission === 'function') {
+                
+                const permission = await DeviceMotionEvent.requestPermission();
+                
+                if (permission === 'granted') {
                     activateStabilization();
+                } else {
+                    updateStatus('❌ Permission denied. Please reload and try again.', 'error');
                 }
-            } catch (error) {
-                updateStatus('❌ Error: ' + error.message, 'error');
-                console.error('Motion sensor error:', error);
+            } else {
+                activateStabilization();
             }
+        } catch (error) {
+            updateStatus('❌ Error: ' + error.message, 'error');
+            console.error('Motion sensor error:', error);
         }
+    }
 
-        function activateStabilization() {
-            isStabilizing = true;
-            
-            // Reset all offsets to zero when starting
-            offsetX = 0;
-            offsetY = 0;
-            velocityX = 0;
-            velocityY = 0;
-            
-            window.addEventListener('devicemotion', handleMotion);
-            
-            startButton.classList.add('hidden');
-            stopButton.classList.remove('hidden');
-            
-            updateStatus('✅ Stabilization Active - Content stays steady as you move', 'active');
-            
-            // Add stabilizing class to enable buffer zone
-            stabilizedContent.classList.remove('no-stabilization');
-            stabilizedContent.classList.add('stabilizing');
-            
-            if (largeTextToggle.checked) {
-                readingContent.classList.add('large-text');
+    function activateStabilization() {
+        isStabilizing = true;
+        
+        // Reset all offsets to zero when starting
+        offsetX = 0;
+        offsetY = 0;
+        velocityX = 0;
+        velocityY = 0;
+        
+        window.addEventListener('devicemotion', handleMotion);
+        
+        startButton.classList.add('hidden');
+        stopButton.classList.remove('hidden');
+        
+        updateStatus('✅ Stabilization Active - Content stays steady as you move', 'active');
+        
+        // Add stabilizing class to enable buffer zone
+        stabilizedContent.classList.remove('no-stabilization');
+        stabilizedContent.classList.add('stabilizing');
+        
+        if (largeTextToggle.checked) {
+            readingContent.classList.add('large-text');
+        }
+        
+        updateStabilization();
+    }
+
+    function stopStabilization() {
+        isStabilizing = false;
+        window.removeEventListener('devicemotion', handleMotion);
+        
+        startButton.classList.remove('hidden');
+        stopButton.classList.add('hidden');
+        
+        offsetX = 0;
+        offsetY = 0;
+        velocityX = 0;
+        velocityY = 0;
+        stabilizedContent.style.transform = 'translate(0, 0)';
+        
+        // Remove stabilizing class to remove buffer zone
+        stabilizedContent.classList.add('no-stabilization');
+        stabilizedContent.classList.remove('stabilizing');
+        
+        readingContent.classList.remove('large-text');
+        
+        updateStatus('⏸️ Stabilization Disabled', '');
+    }
+
+    function updateStatus(message, type) {
+        status.textContent = message;
+        status.className = type;
+    }
+
+    startButton.addEventListener('click', startStabilization);
+    stopButton.addEventListener('click', stopStabilization);
+
+    menuBtn.addEventListener('click', () => {
+        settingsPanel.classList.add('open');
+        overlay.classList.add('show');
+    });
+
+    closeSettingsBtn.addEventListener('click', () => {
+        settingsPanel.classList.remove('open');
+        overlay.classList.remove('show');
+    });
+
+    overlay.addEventListener('click', () => {
+        settingsPanel.classList.remove('open');
+        overlay.classList.remove('show');
+    });
+
+    // Prevent zoom on double tap
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (event) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // Demo functionality
+    const demoOverlay = document.getElementById('demoOverlay');
+    const demoSquare = document.getElementById('demoSquare');
+    const demoGhost = document.getElementById('demoGhost');
+    const viewDemoBtn = document.getElementById('viewDemoBtn');
+    const closeDemoBtn = document.getElementById('closeDemoBtn');
+    const toggleDemoBtn = document.getElementById('toggleDemoBtn');
+
+    let demoStabilizing = false;
+    let demoOffsetX = 0, demoOffsetY = 0;
+    let demoVelX = 0, demoVelY = 0;
+    let demoRawX = 0, demoRawY = 0;
+    let demoGhostHistory = [];
+
+    const demoSensitivity = 25;
+    const demoSmoothing = 0.85;
+    const demoDrift = 0.995;
+    const demoMaxOffset = 150;
+    const demoHistoryDuration = 10000;
+
+    viewDemoBtn.addEventListener('click', () => {
+        demoOverlay.classList.add('show');
+        settingsPanel.classList.remove('open');
+        overlay.classList.remove('show');
+        demoRawX = demoRawY = demoOffsetX = demoOffsetY = demoVelX = demoVelY = 0;
+        demoSquare.style.transform = 'translate(0, 0)';
+        demoGhost.style.transform = 'translate(0, 0)';
+    });
+
+    closeDemoBtn.addEventListener('click', () => {
+        demoOverlay.classList.remove('show');
+        if (demoStabilizing) {
+            demoStabilizing = false;
+            toggleDemoBtn.textContent = 'Enable Stabilization';
+            demoGhost.style.display = 'none';
+            window.removeEventListener('devicemotion', handleDemoMotion);
+        }
+    });
+
+    toggleDemoBtn.addEventListener('click', async () => {
+        if (!demoStabilizing) {
+            try {
+                if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission !== 'granted') return;
+                }
+                demoStabilizing = true;
+                toggleDemoBtn.textContent = 'Disable Stabilization';
+                demoGhost.style.display = 'block';
+                demoGhostHistory = [];
+                window.addEventListener('devicemotion', handleDemoMotion);
+                updateDemo();
+            } catch (e) {
+                console.error(e);
             }
-            
-            updateStabilization();
-        }
-
-        function stopStabilization() {
-            isStabilizing = false;
-            window.removeEventListener('devicemotion', handleMotion);
-            
-            startButton.classList.remove('hidden');
-            stopButton.classList.add('hidden');
-            
-            offsetX = 0;
-            offsetY = 0;
-            velocityX = 0;
-            velocityY = 0;
-            stabilizedContent.style.transform = 'translate(0, 0)';
-            
-            // Remove stabilizing class to remove buffer zone
-            stabilizedContent.classList.add('no-stabilization');
-            stabilizedContent.classList.remove('stabilizing');
-            
-            readingContent.classList.remove('large-text');
-            
-            updateStatus('⏸️ Stabilization Disabled', '');
-        }
-
-        function updateStatus(message, type) {
-            status.textContent = message;
-            status.className = type;
-        }
-
-        startButton.addEventListener('click', startStabilization);
-        stopButton.addEventListener('click', stopStabilization);
-
-        menuBtn.addEventListener('click', () => {
-            settingsPanel.classList.add('open');
-            overlay.classList.add('show');
-        });
-
-        closeSettingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-        overlay.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-        // Prevent zoom on double tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (event) => {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-
-        // Demo functionality
-        const demoOverlay = document.getElementById('demoOverlay');
-        const demoSquare = document.getElementById('demoSquare');
-        const demoGhost = document.getElementById('demoGhost');
-        const viewDemoBtn = document.getElementById('viewDemoBtn');
-        const closeDemoBtn = document.getElementById('closeDemoBtn');
-        const toggleDemoBtn = document.getElementById('toggleDemoBtn');
-
-        let demoStabilizing = false;
-        let demoOffsetX = 0, demoOffsetY = 0;
-        let demoVelX = 0, demoVelY = 0;
-        let demoRawX = 0, demoRawY = 0;
-        let demoGhostHistory = [];
-
-        const demoSensitivity = 25;
-        const demoSmoothing = 0.85;
-        const demoDrift = 0.995;
-        const demoMaxOffset = 150;
-        const demoHistoryDuration = 10000;
-
-        viewDemoBtn.addEventListener('click', () => {
-            demoOverlay.classList.add('show');
-            settingsPanel.classList.remove('open');
-            overlay.classList.remove('show');
-            demoRawX = demoRawY = demoOffsetX = demoOffsetY = demoVelX = demoVelY = 0;
+        } else {
+            demoStabilizing = false;
+            toggleDemoBtn.textContent = 'Enable Stabilization';
+            demoGhost.style.display = 'none';
+            window.removeEventListener('devicemotion', handleDemoMotion);
+            demoOffsetX = demoOffsetY = demoVelX = demoVelY = demoRawX = demoRawY = 0;
             demoSquare.style.transform = 'translate(0, 0)';
-            demoGhost.style.transform = 'translate(0, 0)';
-        });
-
-        closeDemoBtn.addEventListener('click', () => {
-            demoOverlay.classList.remove('show');
-            if (demoStabilizing) {
-                demoStabilizing = false;
-                toggleDemoBtn.textContent = 'Enable Stabilization';
-                demoGhost.style.display = 'none';
-                window.removeEventListener('devicemotion', handleDemoMotion);
-            }
-        });
-
-        toggleDemoBtn.addEventListener('click', async () => {
-            if (!demoStabilizing) {
-                try {
-                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                        const permission = await DeviceMotionEvent.requestPermission();
-                        if (permission !== 'granted') return;
-                    }
-                    demoStabilizing = true;
-                    toggleDemoBtn.textContent = 'Disable Stabilization';
-                    demoGhost.style.display = 'block';
-                    demoGhostHistory = [];
-                    window.addEventListener('devicemotion', handleDemoMotion);
-                    updateDemo();
-                } catch (e) {
-                    console.error(e);
-                }
-            } else {
-                demoStabilizing = false;
-                toggleDemoBtn.textContent = 'Enable Stabilization';
-                demoGhost.style.display = 'none';
-                window.removeEventListener('devicemotion', handleDemoMotion);
-                demoOffsetX = demoOffsetY = demoVelX = demoVelY = demoRawX = demoRawY = 0;
-                demoSquare.style.transform = 'translate(0, 0)';
-            }
-        });
-
-        function handleDemoMotion(e) {
-            const accel = e.accelerationIncludingGravity;
-            if (!accel) return;
-            
-            const ax = accel.x || 0;
-            const ay = accel.y || 0;
-            
-            demoRawX += ax * 0.5;
-            demoRawY -= ay * 0.5; // Inverted for natural physics
-            demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
-            demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
-            
-            if (demoStabilizing) {
-                const targetVelX = -ax * demoSensitivity * 0.1;
-                const targetVelY = -ay * demoSensitivity * 0.1;
-                demoVelX = demoVelX * demoSmoothing + targetVelX * (1 - demoSmoothing);
-                demoVelY = demoVelY * demoSmoothing + targetVelY * (1 - demoSmoothing);
-                demoOffsetX = (demoOffsetX + demoVelX) * demoDrift;
-                demoOffsetY = (demoOffsetY + demoVelY) * demoDrift;
-                demoOffsetX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetX));
-                demoOffsetY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetY));
-                
-                demoGhostHistory.push({ x: demoRawX, y: demoRawY, time: Date.now() });
-                const now = Date.now();
-                demoGhostHistory = demoGhostHistory.filter(p => now - p.time < demoHistoryDuration);
-            } else {
-                demoOffsetX = demoRawX;
-                demoOffsetY = demoRawY;
-            }
         }
+    });
 
-        function updateDemo() {
-            if (!demoStabilizing) return;
-            // Black square = stabilized (raw position - compensation offset to counteract)
-            demoSquare.style.transform = `translate(${demoRawX - demoOffsetX}px, ${demoRawY - demoOffsetY}px)`;
-            // Ghost = unstabilized (just the raw shake)
-            demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
-            requestAnimationFrame(updateDemo);
+    function handleDemoMotion(e) {
+        const accel = e.accelerationIncludingGravity;
+        if (!accel) return;
+        
+        const ax = accel.x || 0;
+        const ay = accel.y || 0;
+        
+        demoRawX += ax * 0.5;
+        demoRawY -= ay * 0.5; // Inverted for natural physics
+        demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
+        demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
+        
+        if (demoStabilizing) {
+            const targetVelX = -ax * demoSensitivity * 0.1;
+            const targetVelY = -ay * demoSensitivity * 0.1;
+            demoVelX = demoVelX * demoSmoothing + targetVelX * (1 - demoSmoothing);
+            demoVelY = demoVelY * demoSmoothing + targetVelY * (1 - demoSmoothing);
+            demoOffsetX = (demoOffsetX + demoVelX) * demoDrift;
+            demoOffsetY = (demoOffsetY + demoVelY) * demoDrift;
+            demoOffsetX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetX));
+            demoOffsetY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoOffsetY));
+            
+            demoGhostHistory.push({ x: demoRawX, y: demoRawY, time: Date.now() });
+            const now = Date.now();
+            demoGhostHistory = demoGhostHistory.filter(p => now - p.time < demoHistoryDuration);
+        } else {
+            demoOffsetX = demoRawX;
+            demoOffsetY = demoRawY;
         }
+    }
 
-        window.addEventListener('devicemotion', (e) => {
-            if (demoStabilizing || !demoOverlay.classList.contains('show')) return;
-            const accel = e.accelerationIncludingGravity;
-            if (!accel) return;
-            
-            const ax = accel.x || 0;
-            const ay = accel.y || 0;
-            
-            demoRawX += ax * 0.5;
-            demoRawY -= ay * 0.5; // Inverted for natural physics
-            demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
-            demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
-            
-            demoSquare.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
-        });
-    </script>
+    function updateDemo() {
+        if (!demoStabilizing) return;
+        // Black square = stabilized (raw position - compensation offset to counteract)
+        demoSquare.style.transform = `translate(${demoRawX - demoOffsetX}px, ${demoRawY - demoOffsetY}px)`;
+        // Ghost = unstabilized (just the raw shake)
+        demoGhost.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+        requestAnimationFrame(updateDemo);
+    }
+
+    window.addEventListener('devicemotion', (e) => {
+        if (demoStabilizing || !demoOverlay.classList.contains('show')) return;
+        const accel = e.accelerationIncludingGravity;
+        if (!accel) return;
+        
+        const ax = accel.x || 0;
+        const ay = accel.y || 0;
+        
+        demoRawX += ax * 0.5;
+        demoRawY -= ay * 0.5; // Inverted for natural physics
+        demoRawX = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawX));
+        demoRawY = Math.max(-demoMaxOffset, Math.min(demoMaxOffset, demoRawY));
+        
+        demoSquare.style.transform = `translate(${demoRawX}px, ${demoRawY}px)`;
+    });
+</script>
+```
+
 </body>
 </html>
